@@ -21,6 +21,14 @@ export type User = {
   updatedAt: string
   username: string
 }
+export type Category = {
+  __v: number
+  _id: string
+  updatedAt: string
+  createdAt: string
+  owner: string
+  name: string
+}
 
 export type Error = {
   errors?: Record<string, string[]>
