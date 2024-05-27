@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useCategoryStore } from '@/stores/categoryStore'
+import { useGlobalLoader } from 'vue-global-loader'
+const { displayLoader, destroyLoader } = useGlobalLoader()
 type PAYLOAD = {
   name: string
 }
@@ -17,13 +19,29 @@ const store = useCategoryStore()
 
 const onSubmit = async () => {
   try {
+    displayLoader()
+
     await store.createCategory(form.value)
     router.push('/')
   } catch (error) {
     console.log(error)
   } finally {
+    destroyLoader()
   }
 }
+const fetchCategories = async () => {
+  try {
+    displayLoader()
+    await store.getCategories(1, 2)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    destroyLoader()
+  }
+}
+onMounted(async () => {
+  await fetchCategories()
+})
 </script>
 
 <template>

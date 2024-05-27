@@ -30,6 +30,22 @@ export type Category = {
   name: string
 }
 
+type PaginationContent = {
+  limit: number
+  page: number
+  totalPages: number
+  serialNumberStartFrom: number
+  hasPrevPage: boolean
+  hasNextPage: boolean
+  prevPage: null | number
+  nextPage: null | number
+}
+
+export type Categories = PaginationContent & {
+  totalCategories: number
+  categories: Category[]
+}
+
 export type Error = {
   errors?: Record<string, string[]>
   statusCode: number
