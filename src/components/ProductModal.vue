@@ -32,6 +32,23 @@
           </div>
         </div>
         <div class="grid gap-2">
+          <template v-if="!form.subImages">
+            <Label for="mImage">Sub Images</Label>
+            <FileUploader
+              @on-change="onSubImageChange"
+              @on-drop="onSubImageDrop"
+              :multiple="true"
+            />
+          </template>
+          <div class="grid grid-cols-2 gap-x-2 flex-wrap" v-else>
+            <img
+              v-for="img in subImagesPreviews"
+              :src="img"
+              class="h-40 w-auto object-cover border"
+            />
+          </div>
+        </div>
+        <div class="grid gap-2">
           <Label for="description">Description</Label>
           <Input
             id="description"
@@ -138,6 +155,28 @@ const onMainImageChange = (files: FileList | null) => {
         if (url.value) {
           mainImagePreview.value.push(url.value)
         }
+      }
+    })
+  }
+}
+const onSubImageDrop = (files: File[] | null) => {
+  form.value.subImages = files && files.length > 0 ? files : undefined
+  if (files && files.length) {
+    files.forEach((file, index) => {
+      const url = useObjectUrl(file)
+      if (url.value) {
+        subImagesPreviews.value.push(url.value)
+      }
+    })
+  }
+}
+const onSubImageChange = (files: FileList | null) => {
+  form.value.subImages = files && files.length > 0 ? Array.from(files) : undefined
+  if (files && files.length) {
+    Array.from(files).forEach((file, index) => {
+      const url = useObjectUrl(file)
+      if (url.value) {
+        subImagesPreviews.value.push(url.value)
       }
     })
   }
