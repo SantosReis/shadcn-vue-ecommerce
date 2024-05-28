@@ -1,9 +1,28 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { Button } from '@/components/ui/button'
 import ProductModal from '@/components/ProductModal.vue'
 
+import { useGlobalLoader } from 'vue-global-loader'
+const { displayLoader, destroyLoader } = useGlobalLoader()
+
 import productModal from '@/composables/useProductModal'
 const { onOpen, isOpen } = productModal()
+
+import { useCategoryStore } from '@/stores/categoryStore'
+const categoryStore = useCategoryStore()
+
+const fetchCategories = async () => {
+  try {
+    await categoryStore.getCategories(1, 5)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+onMounted(async () => {
+  await fetchCategories()
+})
 </script>
 <template>
   <ProductModal v-if="isOpen" />
