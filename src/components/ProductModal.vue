@@ -128,6 +128,8 @@ const form = ref<PAYLOAD>({
 //category setup
 import { useCategoryStore } from '@/stores/categoryStore'
 const categoryStore = useCategoryStore()
+import { useProductStore } from '@/stores/productStore'
+const productStore = useProductStore()
 const categories = computed(() => categoryStore.categoriesData.categories)
 
 //category upload setup
@@ -179,6 +181,17 @@ const onSubImageChange = (files: FileList | null) => {
         subImagesPreviews.value.push(url.value)
       }
     })
+  }
+}
+const onSubmit = async () => {
+  try {
+    displayLoader()
+    await productStore.createProduct(form.value)
+    onClose()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    destroyLoader()
   }
 }
 </script>
