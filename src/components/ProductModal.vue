@@ -15,6 +15,23 @@
           <Input id="stock" type="number" placeholder="stock" v-model="form.stock" />
         </div>
         <div class="grid gap-2">
+          <template v-if="!form.mainImage">
+            <Label for="mImage">Main Image</Label>
+            <FileUploader
+              @on-change="onMainImageChange"
+              @on-drop="onMainImageDrop"
+              :multiple="false"
+            />
+          </template>
+          <div class="flex gap-x-2" v-else>
+            <img
+              v-for="img in mainImagePreview"
+              :src="img"
+              class="h-40 w-auto object-cover border"
+            />
+          </div>
+        </div>
+        <div class="grid gap-2">
           <Label for="description">Description</Label>
           <Input
             id="description"
@@ -48,6 +65,8 @@
 <script setup lang="ts">
 //modal call
 import Modal from '@/components/ui/Modal.vue'
+import FileUploader from '@/components/FileUploader.vue'
+import { useObjectUrl } from '@vueuse/core'
 
 import productModal from '@/composables/useProductModal'
 const { isOpen, onClose } = productModal()
@@ -65,10 +84,10 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 
-//form setup
 import { useGlobalLoader } from 'vue-global-loader'
 const { displayLoader, destroyLoader } = useGlobalLoader()
 
+//form setup
 type PAYLOAD = {
   name: string
   price: number
@@ -93,6 +112,36 @@ const form = ref<PAYLOAD>({
 import { useCategoryStore } from '@/stores/categoryStore'
 const categoryStore = useCategoryStore()
 const categories = computed(() => categoryStore.categoriesData.categories)
+
+//category upload setup
+const mainImagePreview = ref<string[]>([])
+const subImagesPreviews = ref<string[]>([])
+const onMainImageDrop = (files: File[] | null) => {
+  form.value.mainImage = files && files.length > 0 ? files[0] : undefined
+  if (files && files.length) {
+    files.forEach((file, index) => {
+      if (index === 0) {
+        const url = useObjectUrl(file)
+        if (url.value) {
+          mainImagePreview.value.push(url.value)
+        }
+      }
+    })
+  }
+}
+const onMainImageChange = (files: FileList | null) => {
+  form.value.mainImage = files && files.length > 0 ? files[0] : undefined
+  if (files && files.length) {
+    Array.from(files).forEach((file, index) => {
+      if (index === 0) {
+        const url = useObjectUrl(file)
+        if (url.value) {
+          mainImagePreview.value.push(url.value)
+        }
+      }
+    })
+  }
+}
 </script>
 
 <style scoped></style>
