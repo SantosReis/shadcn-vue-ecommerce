@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from '@/plugins/axios'
 import type { APIResponse, Product, Products } from '@/types/index'
+import { handleSuccess, handleError } from '@/lib/utils'
 
 export const useProductStore = defineStore('ProductStore', {
   state: () => ({
@@ -48,9 +49,11 @@ export const useProductStore = defineStore('ProductStore', {
         try {
           const { data } = await axios.delete(`/ecommerce/products/${productId}`)
           console.log('products', data.data)
+          // this.productsData.products = this.productsData.products.filter(p => p._id !== productId);
           await this.getProducts(1, 2)
           resolve(data.data)
         } catch (error) {
+          handleError(error)
           reject(error)
         }
       })
@@ -62,6 +65,7 @@ export const useProductStore = defineStore('ProductStore', {
           console.log('product', data.data)
           resolve(data.data)
         } catch (error) {
+          handleError(error)
           reject(error)
         }
       })
@@ -92,9 +96,10 @@ export const useProductStore = defineStore('ProductStore', {
           )
           console.log('product', data.data)
           await this.getProducts(1, 2)
-
+          handleSuccess(data.statusCode.toString(), data.message)
           resolve(data.data)
         } catch (error) {
+          handleError(error)
           reject(error)
         }
       })
