@@ -5,7 +5,16 @@ import ProductModal from '@/components/ProductModal.vue'
 
 import { useGlobalLoader } from 'vue-global-loader'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
-
+import {
+  Pagination,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationLast,
+  PaginationList,
+  PaginationListItem,
+  PaginationNext,
+  PaginationPrev
+} from '@/components/ui/pagination'
 const { displayLoader, destroyLoader } = useGlobalLoader()
 
 import productModal from '@/composables/useProductModal'
@@ -17,6 +26,9 @@ import { useProductStore } from '@/stores/productStore'
 const productStore = useProductStore()
 
 const products = computed(() => productStore.productsData.products)
+const totalPages = computed(() => productStore.productsData.totalPages)
+const totalProducts = computed(() => productStore.productsData.totalProducts)
+const productsData = computed(() => productStore.productsData)
 
 const currentPage = ref(1)
 
@@ -77,6 +89,43 @@ onMounted(async () => {
           <p>{{ product.price }}$</p>
         </CardFooter>
       </Card>
+    </div>
+    <div
+      class="w-full flex justify-center"
+      v-if="Object.keys(productsData).length && productsData.products.length"
+    >
+      <Pagination v-slot="{ page }" :total="totalProducts" :default-page="1" :items-per-page="2">
+        <PaginationList v-slot="{ items }" class="flex items-center gap-1">
+          <PaginationFirst @click="currentPage = 1" />
+          <PaginationPrev @click="currentPage = currentPage - 1" />
+
+          <template v-for="(item, index) in items">
+            <PaginationListItem
+              v-if="item.type === 'page'"
+              :key="index"
+              :value="item.value"
+              as-child
+            >
+              <Button
+                class="w-10 h-10 p-0"
+                :variant="item.value === page ? 'default' : 'outline'"
+                @click="
+                  async () => {
+                    currentPage = item.value
+                    await fetchProducts()
+                  }
+                "
+              >
+                {{ item.value }}
+              </Button>
+            </PaginationListItem>
+            <PaginationEllipsis v-else :key="item.type" :index="index" />
+          </template>
+
+          <PaginationNext @click="currentPage = currentPage + 1" />
+          <PaginationLast @click="currentPage = totalPages" />
+        </PaginationList>
+      </Pagination>
     </div>
   </div>
 </template>
