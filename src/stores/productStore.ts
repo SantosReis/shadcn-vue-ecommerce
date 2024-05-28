@@ -65,6 +65,39 @@ export const useProductStore = defineStore('ProductStore', {
           reject(error)
         }
       })
+    },
+    async editProduct(productId: string, form: Record<string, any>) {
+      return new Promise<Product>(async (resolve, reject) => {
+        try {
+          console.log(form)
+
+          const formData = new FormData()
+          formData.append('name', form.name)
+          formData.append('price', form.price)
+          formData.append('stock', form.stock)
+          if (form.mainImage) {
+            formData.append('mainImage', form.mainImage)
+          }
+          if (form.subImages) {
+            for (let i = 0; i < form.subImages.length; i++) {
+              formData.append('subImages', form.subImages[i])
+            }
+          }
+          formData.append('description', form.description)
+          formData.append('category', form.category)
+
+          const { data } = await axios.patch<APIResponse<Product>>(
+            `/ecommerce/products/${productId}`,
+            formData
+          )
+          console.log('product', data.data)
+          await this.getProducts(1, 2)
+
+          resolve(data.data)
+        } catch (error) {
+          reject(error)
+        }
+      })
     }
   }
 })

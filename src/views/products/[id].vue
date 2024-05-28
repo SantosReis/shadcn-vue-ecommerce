@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto w-full max-w-4xl my-10">
-    <form action="" class="grid gap-y-4">
+    <form @submit.prevent="onSubmit" action="" class="grid gap-y-4">
       <div class="grid gap-2">
         <Label for="name">Name</Label>
         <Input id="name" type="text" placeholder="name" v-model="form.name" />
@@ -64,12 +64,11 @@
 </template>
 
 <script setup lang="ts">
-import Modal from '@/components/ui/Modal.vue'
 import FileUploader from '@/components/FileUploader.vue'
 import { useObjectUrl } from '@vueuse/core'
 
 import productModal from '@/composables/useProductModal'
-const { isOpen, onClose } = productModal()
+const { onClose } = productModal()
 import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import {
@@ -165,6 +164,17 @@ const onSubImageChange = (files: FileList | null) => {
 }
 const route = useRoute()
 
+const onSubmit = async () => {
+  try {
+    displayLoader()
+    await productStore.editProduct(route.params.id.toString(), form.value)
+    onClose()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    destroyLoader()
+  }
+}
 const fetchProduct = async () => {
   try {
     displayLoader()
