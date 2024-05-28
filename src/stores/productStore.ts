@@ -54,6 +54,17 @@ export const useProductStore = defineStore('ProductStore', {
           reject(error)
         }
       })
+    },
+    async getProduct(productId: string) {
+      return new Promise<Product>(async (resolve, reject) => {
+        try {
+          const { data } = await axios.get<APIResponse<Product>>(`/ecommerce/products/${productId}`)
+          console.log('product', data.data)
+          resolve(data.data)
+        } catch (error) {
+          reject(error)
+        }
+      })
     }
   }
 })

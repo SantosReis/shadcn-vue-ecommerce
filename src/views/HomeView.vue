@@ -100,6 +100,9 @@ onMounted(async () => {
         <CardFooter class="border-t p-4 pt-4 w-full justify-between">
           <p>{{ product.price }}$</p>
           <div class="flex space-x-2">
+            <Button variant="secondary" @click="$router.push(`/products/${product._id}`)">
+              <Icon icon="tabler:pencil" class="h-4 w-4" />
+            </Button>
             <Button variant="destructive" @click="deleteProduct(product._id)">
               <Icon icon="tabler:trash" class="h-4 w-4" />
             </Button>
