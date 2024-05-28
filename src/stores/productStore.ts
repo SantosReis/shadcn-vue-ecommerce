@@ -28,6 +28,20 @@ export const useProductStore = defineStore('ProductStore', {
           reject(error)
         }
       })
+    },
+    async getProducts(page: number, limit: number) {
+      return new Promise<Products>(async (resolve, reject) => {
+        try {
+          const { data } = await axios.get<APIResponse<Products>>(
+            `/ecommerce/products?page=${page}&limit=${limit}`
+          )
+          console.log('products', data.data)
+          this.productsData = data.data
+          resolve(data.data)
+        } catch (error) {
+          reject(error)
+        }
+      })
     }
   }
 })
