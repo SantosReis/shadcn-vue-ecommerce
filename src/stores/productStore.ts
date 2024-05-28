@@ -42,6 +42,18 @@ export const useProductStore = defineStore('ProductStore', {
           reject(error)
         }
       })
+    },
+    async deleteProduct(productId: string) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const { data } = await axios.delete(`/ecommerce/products/${productId}`)
+          console.log('products', data.data)
+          await this.getProducts(1, 2)
+          resolve(data.data)
+        } catch (error) {
+          reject(error)
+        }
+      })
     }
   }
 })

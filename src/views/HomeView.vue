@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from '@iconify/vue'
 import { onMounted, computed, ref } from 'vue'
 import { Button } from '@/components/ui/button'
 import ProductModal from '@/components/ProductModal.vue'
@@ -57,6 +58,17 @@ const initialSetup = async () => {
     destroyLoader()
   }
 }
+const deleteProduct = async (id: string) => {
+  try {
+    displayLoader()
+
+    await productStore.deleteProduct(id)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    destroyLoader()
+  }
+}
 onMounted(async () => {
   await initialSetup()
 })
@@ -87,6 +99,11 @@ onMounted(async () => {
         </CardContent>
         <CardFooter class="border-t p-4 pt-4 w-full justify-between">
           <p>{{ product.price }}$</p>
+          <div class="flex space-x-2">
+            <Button variant="destructive" @click="deleteProduct(product._id)">
+              <Icon icon="tabler:trash" class="h-4 w-4" />
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </div>
